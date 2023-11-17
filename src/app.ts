@@ -12,6 +12,8 @@ import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
 import { Routes } from '@interfaces/routes.interface';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import expressLayouts from 'express-ejs-layouts';
+import path from 'path';
 
 export class App {
   public app: express.Application;
@@ -23,6 +25,7 @@ export class App {
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
 
+    this.initializeView();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeSwagger();
@@ -40,6 +43,14 @@ export class App {
 
   public getServer() {
     return this.app;
+  }
+
+  private initializeView() {
+    this.app.set('view engine', 'ejs');
+    this.app.set('views', path.join(__dirname, '../views'));
+    this.app.set('layout', 'layouts/layout');
+    this.app.use(expressLayouts);
+    this.app.use(express.static(path.join(__dirname, '../public')));
   }
 
   private initializeMiddlewares() {
