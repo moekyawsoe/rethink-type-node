@@ -12,7 +12,6 @@ import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
 import { Routes } from '@interfaces/routes.interface';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
-import expressLayouts from 'express-ejs-layouts';
 import path from 'path';
 
 export class App {
@@ -46,11 +45,10 @@ export class App {
   }
 
   private initializeView() {
-    this.app.set('view engine', 'ejs');
+    this.app.set('view engine', 'jsx');
     this.app.set('views', path.join(__dirname, '../views'));
-    this.app.set('layout', 'layouts/layout');
-    this.app.use(expressLayouts);
     this.app.use(express.static(path.join(__dirname, '../public')));
+    this.app.engine('jsx', require('express-react-views').createEngine());
   }
 
   private initializeMiddlewares() {
